@@ -1,10 +1,6 @@
 #include "main.h"
-#include "libs/math_emb.h"
-
-#include "libs/spi.h"
 
 #include "usb.h"
-//#include "midi.h"
 #include "libs/delay.h"
 #include "usb_midi.h"
 
@@ -68,29 +64,40 @@ int main(void)
 	DELAY_Init();
 	USB_Init(0);
 	
+#if STM32F!=1
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
-	
+#else
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+#endif
+
 	GPIO_InitTypeDef GPIO_InitStructure;
 	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_MAX;
+#if STM32F!=1
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+#endif
 	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_13;       
 	GPIO_Init(GPIOB, &GPIO_InitStructure);  
 	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_12;       
 	GPIO_Init(GPIOB, &GPIO_InitStructure);  
 	
+#if STM32F!=1
 	//buttons
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+#else
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
+#endif
 	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_4;       
 	GPIO_Init(GPIOC, &GPIO_InitStructure);  
 	
 	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6;       
 	GPIO_Init(GPIOC, &GPIO_InitStructure);  
 	buttonsInitialized=1;
-	
+
 	int loopcount = 0;
 	while(1)
 	{
@@ -130,6 +137,7 @@ int main(void)
   		
 		}
 		
+/*
 		if(get_key_press(KEY_A))
 		{
 		
@@ -158,6 +166,7 @@ int main(void)
 			USB_MIDI_PackageSend_NonBlocking(package);
 		}
 			
+*/
 		DELAY_Wait_uS(1000);
 	}
 

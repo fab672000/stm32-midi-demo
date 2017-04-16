@@ -1,24 +1,36 @@
 PROJECT=template
 
 
-STM32F=4
-LSCRIPT=core/stm32f$(STM32F)xx_flash.ld
+STM32F=1
+STM32F10X_MD=1
 
 OPTIMIZATION = -O2
 
-ifeq ($(STM32F),2)
+ifeq ($(STM32F),1)
+CORTEXM=3
+else ifeq ($(STM32F),2)
 CORTEXM=3
 else
 CORTEXM=4
 endif
 
+ifeq ($(STM32F),1)
+STM32Fx=$(STM32F)0x
+else
+STM32Fx=$(STM32F)xx
+endif
 
-SRC=$(wildcard  *.c usb/*.c midi/*.c libs/*.c) \
+LSCRIPT=core/stm32f$(STM32Fx)_flash.ld
+
+SRC=$(wildcard  *.c \
+	usb/*.c \
+	midi/*.c \
+	libs/*.c) \
 	core/syscalls.c \
 	core/stm32fxxx_it.c \
-	core/system_stm32f$(STM32F)xx.c 
+	core/system_stm32f$(STM32Fx).c 
 
-ASRC=core/startup_stm32f$(STM32F)xx.s
+ASRC=core/startup_stm32f$(STM32Fx).s
 OBJECTS= $(SRC:.c=.o) $(ASRC:.s=.o)
 LSTFILES= $(SRC:.c=.lst)
 HEADERS=$(wildcard usb/*.h core/*.h *.h midi/*.h libs/*.h)
@@ -42,7 +54,7 @@ LDFLAGS = -mcpu=cortex-m$(CORTEXM) -mthumb $(OPTIMIZATION) -T$(LSCRIPT)
 ifeq ($(CORTEXM),4)
 LDFLAGS+= -mfpu=fpv4-sp-d16 -mfloat-abi=hard -falign-functions=16
 endif
-LDFLAGS+= -LSTM32F$(STM32F)_drivers/build -lSTM32F$(STM32F)xx_drivers -lm -lnosys -lc --specs=nano.specs -Wl,--gc-section 
+LDFLAGS+= -LSTM32F$(STM32F)_drivers/build -lSTM32F$(STM32Fx)_drivers -lm -lnosys -lc --specs=nano.specs -Wl,--gc-section 
 
 
 #  Compiler/Assembler Paths

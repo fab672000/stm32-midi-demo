@@ -24,7 +24,7 @@
 #define __USBD_CONF__H__
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx.h"
+#include "stm32fxxx.h"
 
 //#define USE_USB_OTG_HS  
 #define USE_USB_OTG_FS

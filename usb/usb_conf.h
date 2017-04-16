@@ -24,7 +24,7 @@
 #define __USB_CONF__H__
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx.h"
+#include "stm32fxxx.h"
 #include "usbd_conf.h"
 
 

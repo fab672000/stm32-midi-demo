@@ -841,16 +841,15 @@ static const USBD_Usr_cb_TypeDef USBD_USR_Callbacks =
 void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev __attribute__((__unused__)))
 {
   GPIO_InitTypeDef GPIO_InitStructure;
-
+#if STM32F!=1
   RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOA , ENABLE);
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
 
   /* Configure SOF VBUS ID DM DP Pins */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_11 | GPIO_Pin_12;
-
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
   GPIO_PinAFConfig(GPIOA,GPIO_PinSource8,GPIO_AF_OTG1_FS) ;
@@ -868,6 +867,12 @@ void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev __attribute__((__unused__)))
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
   RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE) ;
+
+#else
+  #warning continue port here!
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+#endif
 
   EXTI_ClearITPendingBit(EXTI_Line0);
 }

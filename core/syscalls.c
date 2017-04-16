@@ -1,11 +1,7 @@
 // from newlib_stubs.c
 
-#if STM32F == 2
-#include "stm32f2xx.h"
-#endif
-#if STM32F == 4
-#include "stm32f4xx.h"
-#endif
+#include "stm32fxxx.h"
+
 #include <sys/types.h>
 #include <errno.h>
 
